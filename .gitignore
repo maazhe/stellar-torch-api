@@ -1,0 +1,15 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+#IDE
+.vscode
+/.idea
+
+# Environments
+.env
+.venv/
+
+# log
+*.log
+
