@@ -9,7 +9,9 @@
 
 (function (stellarTorchHome, $, undefined) {
 
-  function initializePointsValues(data_lat_long){
+  var DURATION_BASE = 2000;
+
+  function initializePointsValues(data_lat_long) {
     var pointsData = []
     for (var index_dll in data_lat_long) {
       if (index_dll < data_lat_long.length - 1) {
@@ -41,7 +43,23 @@
         pointsData.push(point);
       }
     }
-    return pointsData   
+    return pointsData
+  }
+
+  function arrayPlusDelay(array, delegate, delay) {
+    var i = 0
+    
+     // seed first call and store interval (to clear later)
+    var interval = setInterval(function() {
+        // each loop, call passed in function
+        delegate(array[i]);
+        
+          // increment, and if we're past array, clear interval
+        if (i++ >= array.length - 1)
+            clearInterval(interval);
+    }, delay)
+   
+   return interval
   }
 
 
@@ -78,26 +96,26 @@
 
     var pointsData = initializePointsValues(options.latlngs)
 
-    var pathOptions = {
-      // color: 'rgba(230,0,230,1)',
-      color: 'rgba(0,0,153,0.8)',
-      weight: 2
-    }
+    var result = arrayPlusDelay(pointsData, function(p) {
+      var pathOptions = {
+        // color: 'rgba(230,0,230,1)',
+        color: 'rgba(0,0,153,0.8)',
+        weight: 2
+      }
 
-    for (var p of pointsData) {
+      // for (var p of pointsData) {
       var offsetX = p['end'][1] - p['start'][1];
       var offsetY = p['end'][0] - p['start'][0];
 
       var r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2));
 
       if (typeof document.getElementById('mapid').animate === "function") {
-        var durationBase = 2000;
-        var duration = Math.sqrt(Math.log(r)) * durationBase;
+        // var duration = Math.sqrt(Math.log(r)) * DURATION_BASE;
         // Scales the animation duration so that it's related to the line length
         // (but such that the longest and shortest lines' durations are not too different).
         // You may want to use a different scaling factor.
         pathOptions.animate = {
-          duration: duration,
+          duration: DURATION_BASE,
           // iterations: Infinity,
           easing: 'ease-in-out',
           direction: 'alternate'
@@ -106,16 +124,11 @@
       var curvedPath = L.curve(
         [
           'M', p['start'],
-          'Q', p['mid'],p['end']
-        ], pathOptions).addTo(map);
+          'Q', p['mid'], p['end']
+        ], pathOptions);
 
-      // var curvedPath = L.curve(
-      //   [
-      //     'M', latlng1,
-      //     'Q', midpointLatLng,
-      //       latlng2
-      //   ], pathOptions).addTo(map);
-    }
+      curvedPath.addTo(map);
+    },DURATION_BASE)
   }
 
   // Initialize
