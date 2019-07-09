@@ -1,4 +1,4 @@
-# stack-ranking-api
+# stellar-torch-api
 
 Funny API to display stellar torch transction on map
 
