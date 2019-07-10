@@ -10,7 +10,8 @@ env = Environment(loader=file_loader)
 
 def get_data_dict():
     return {
-        'latlngs' : config.LATLNGS
+        'latlngs' : config.LATLNGS,
+        'distanceCovered': 0
     }
 
 def get_home(request):

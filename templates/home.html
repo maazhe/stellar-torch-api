@@ -8,13 +8,14 @@
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin="" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
 </head>
 
 <body>
   <div class="container" style="text-align: center">
 
     <div id="mapid" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 800px"></div>
+    <div><span>Already </span><span id="distance-span">{{ data.distanceCovered }}</span><span> km covered</span></div>
 
   </div>
 
@@ -36,7 +37,8 @@
   <script>
     /*<![CDATA[*/
     var stellarTorchHomeOptions = {
-      latlngs: {{data.latlngs}}
+      latlngs: {{ data.latlngs }},
+      distance: {{ data.distanceCovered }}
     }
     /*]]>*/
   </script>

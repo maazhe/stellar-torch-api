@@ -10,6 +10,29 @@
 (function (stellarTorchHome, $, undefined) {
 
   var DURATION_BASE = 2000;
+  var radiusInMeters = 6371000;
+  
+  function updateDistance(distanceInKm) {
+    $('#distance-span').text(distanceInKm)
+  }
+
+  Math.radians = function(degrees) {
+    return degrees * Math.PI / 180;
+  };
+ 
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    var phi1 = Math.radians(lat1);//.toRadians();
+    var phi2 = Math.radians(lat2);//.toRadians();
+    var deltaPhi = Math.radians(lat2-lat1);//.toRadians();
+    var delta = Math.radians(lon2-lon1);//.toRadians();
+
+    var a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(delta/2) * Math.sin(delta/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var d = radiusInMeters * c;
+    return d;
+  }
+
 
   function initializePointsValues(data_lat_long) {
     var pointsData = []
@@ -35,10 +58,13 @@
 
         var midpointLatLng = [midpointY, midpointX];
 
+        var distance = calculateDistance(latlng1[0], latlng1[1], latlng2[0], latlng2[1])
+
         var point = {
           'start': latlng1,
           'mid': midpointLatLng,
-          'end': latlng2
+          'end': latlng2,
+          'dist': distance
         }
         pointsData.push(point);
       }
@@ -95,6 +121,8 @@
     });
 
     var pointsData = initializePointsValues(options.latlngs)
+    var distance = options.distance ? options.distance : 0;
+    updateDistance(Math.round(distance/1000))
 
     var result = arrayPlusDelay(pointsData, function(p) {
       var pathOptions = {
@@ -128,7 +156,12 @@
         ], pathOptions);
 
       curvedPath.addTo(map);
-    },DURATION_BASE)
+
+      distance = distance + Number(p['dist'])
+      var distanceInKm = Math.round(distance/1000)
+      updateDistance(distanceInKm)
+      
+    }, DURATION_BASE)
   }
 
   // Initialize
